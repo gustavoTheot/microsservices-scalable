@@ -1,0 +1,29 @@
+# message broker com rabbitmq
+
+services: 
+  broker: 
+    image: rabbitmq:3-management
+    ports:
+      # porta que com protocolo TCP para enviar e receber mensagens entre os microsserviços
+      - "5672:5672"
+      # interface gráfica do rabbitmq para monitorar as filas e mensagens
+      - "15672:15672"
+    # mensagens serem persistidas caso mate o container
+    volumes:
+      # persistência dos dados do rabbitmq para não perder as mensagens em caso de reinício do container
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # criação de observabilidade para monitorar o desempenho e rastreamento dos microsserviços
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    ports:
+      # porta para acessar a interface do Jaeger
+      - "16686:16686"
+      - "6831:6831/udp" # Traces UDP
+      - "14686:14686" # Traces HTTP
+      - "4317:4317" # OTLP/gRPC
+      - "4318:4318" # OTLP/HTTP
+
+
+volumes:
+  rabbitmq_data:
